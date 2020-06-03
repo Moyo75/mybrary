@@ -5,9 +5,11 @@ const express = require('express');
 const app = express();
 const expressLayouts = require('express-ejs-layouts');
 const bodyParser = require('body-parser');
+const port = process.env.PORT || 3000;
 
 const indexRouter = require('./routes/index');
 const authorRouter = require('./routes/authors');
+const bookRouter = require('./routes/books');
 
 app.set('view engine', 'ejs');
 app.set('views', __dirname + '/views');
@@ -15,8 +17,14 @@ app.set('layout', 'layouts/layout');
 
 app.use(expressLayouts);
 app.use(express.static('public'));
-
-app.use(bodyParser.urlencoded({ limit: '10mb', extended: false }));
+app.use(bodyParser.json({ limit: '50mb' }));
+app.use(
+  bodyParser.urlencoded({
+    limit: '50mb',
+    extended: true,
+    parameterLimit: 50000,
+  })
+);
 
 const mongoose = require('mongoose');
 mongoose.connect(process.env.DATABASE_URL, {
@@ -25,9 +33,10 @@ mongoose.connect(process.env.DATABASE_URL, {
 });
 const db = mongoose.connection;
 db.on('error', (error) => console.error(`Database error: ${error}`));
-db.once('open', () => console.log(`Connected to database...`));
+db.once('open', () => console.log(`Connected to database`));
 
 app.use('/', indexRouter);
 app.use('/authors', authorRouter);
+app.use('/books', bookRouter);
 
-app.listen(process.env.PORT || 3000);
+app.listen(port, () => console.log(`Server running on port ${port}...`));
