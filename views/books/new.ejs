@@ -1,13 +1,9 @@
 <h2>New Book</h2>
 
-<form action="/books" method="post" enctype="multipart/form-data">
+<form action="/books" method="post">
   <%- include('_form_fields') %>
   <a href="/books">Cancel</a>
   <button type="submit">Create</button>
 </form>
 
-<script>
-  function readcover(input) {
-    console.log(input.value);
-  }
-</script>
+<script defer src="javascripts/fileUpload.js"></script>
